@@ -1,0 +1,6 @@
+#ifndef BITCOINEXCHANGE
+#define BITCOINEXCHANGE
+
+
+
+#endif
