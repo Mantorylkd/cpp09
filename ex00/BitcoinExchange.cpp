@@ -100,14 +100,15 @@ void    BitcoinExchange::loadDataBase()
             }
         }
 
-        for(it = db.begin() ; it != db.end() ; it++)
+        it = db.begin();
+        std::advance(it,1);
+        
+        for(it ; it != db.end() ; ++it)
         {
-            std::cout << db[date] << std::endl;
+            std::cout << it->first << " =>"<< it->second << std::endl;
         }
     }
 }
-
-
 
 int main()
 {
