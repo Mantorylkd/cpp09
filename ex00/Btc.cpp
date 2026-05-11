@@ -48,7 +48,7 @@ bool isLeapYear(int year)
     return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 }
 
-bool  isvalideDay(float& day, float& month, float& year)
+bool  isvalideDay(float& month, float& day, float& year)
 {
     if(month == 2)
     {
@@ -228,9 +228,13 @@ bool isvalideFormat(std::string& date, float& year, float& month, float& day)
 }
 
 
-BitcoinExchange::BitcoinExchange()
+
+
+
+
+int main()
 {
-  std::ifstream input("input.txt"); 
+    std::ifstream input("input.txt"); 
     
     if (!input.is_open())
         std::cout << "input file not found\n";
@@ -271,56 +275,7 @@ BitcoinExchange::BitcoinExchange()
             std::cout << std::endl;
         }   
     }
-    db[date] = value;
 }
-
-
-
-
-// int main()
-// {
-//     std::ifstream input("input.txt"); 
-    
-//     if (!input.is_open())
-//         std::cout << "input file not found\n";
-
-//     std::string line;
-//     std::string date;
-    
-//     float month;
-//     float day;
-//     float year;
-    
-//     float value;
-    
-//     getline(input , line);
-//     while(std::getline(input,line))
-//     {
-//         if(s_trim(line).empty())
-//             continue;
-//         else
-//             std::cout << line << std::endl;
-
-//         if(inputfile_parsing(line , date, value))
-//         {
-//             if(!isvalideFormat(date, year, month , day))
-//            {
-//                 std::cout << "invalid date" << std::endl;
-//                 std::cout << std::endl;
-//             }
-//             else
-//             {
-//                 std::cout << "valid" << std::endl;
-//                 std::cout << std::endl;
-//             }
-//         }
-//         else 
-//         {
-//             std::cout << "invalid syntax"<< std::endl;
-//             std::cout << std::endl;
-//         }   
-//     }
-// }
 
 
 
