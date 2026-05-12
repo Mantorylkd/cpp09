@@ -12,15 +12,19 @@ class BitcoinExchange
             
     public:
         BitcoinExchange();
-
-        void loadDataBase();
-        // BitcoinExchange (const BitcoinExchange& other) {};
-        // BitcoinExchange& operator =  (const BitcoinExchange& other) {};
         ~BitcoinExchange() {};
 
-        bool   Db_parsing(std::string& line ,std::string& date, float& rate);
-        bool isvalidFormat(std::string& date, float& month, float& day, float& rate);
-        std::map<std::string , float>  iteration();     
+        void loadDataBase();
+        void loadInputfile();       
+        
+        // BitcoinExchange (const BitcoinExchange& other) {};
+        // BitcoinExchange& operator =  (const BitcoinExchange& other) {};
+
+        bool    Db_parsing(std::string& line ,std::string& date, float& rate);
+        bool    inputFile_parsing(std::string& line ,std::string& date, float& value);
+        bool    isvalidFormat_Db(std::string& date, float& month, float& day, float& rate);
+        bool    isvalidFormat_Input(std::string& date, float&year, float& month, float& day);
+        
 };
 
 
