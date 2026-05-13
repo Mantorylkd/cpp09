@@ -4,10 +4,7 @@
 #include <cctype>
 #include <string>
 
-BitcoinExchange::BitcoinExchange()
-{
-    db[""] = 0;
-}  
+BitcoinExchange::BitcoinExchange() {}  
 
 bool  BitcoinExchange::Db_parsing(std::string& line ,std::string& date, float& rate)
 {
@@ -49,7 +46,7 @@ bool isNumericValue(const std::string& val)
             continue;
         if (val[i] == '.')
         {
-            dotCount == 1;
+            dotCount++;
 
             if (dotCount > 1)
                 return false;
@@ -67,7 +64,7 @@ bool isLeapYear(int year)
     return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 }
 
-bool  isvalideDay(float& month, float& day, float& year)
+bool  isvalideDay(int& day, int& month, int& year)
 {
     if(month == 2)
     {
@@ -98,7 +95,7 @@ bool  isvalideDay(float& month, float& day, float& year)
     return false;
 }
 
-bool  isvalideMonth(float& month )
+bool  isvalideMonth(int& month )
 {
     if(month >= 1 && month <= 12)
         return true;
@@ -161,18 +158,18 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
 }
 
 
-bool BitcoinExchange::isvalidFormat_Db(std::string& date, float& month, float& day, float& rate)
+bool BitcoinExchange::isvalidFormat_Db(std::string& date, int& month, int& day)
 {
+    if(date.length() != 10)
+        return false;
+    
     int underscoreFound = 0;
     int i = 0;
     std::string monthPart;
     std::string dayPart;
-    std::string ratePart;
 
-    while (date[i])
-    {   
-        if(date.length() != 10)
-            return false;
+    while (i < date.length())
+    {       
         if (date[i] == '-')
         {
             if (underscoreFound == 0)
@@ -181,7 +178,7 @@ bool BitcoinExchange::isvalidFormat_Db(std::string& date, float& month, float& d
                 {
                     underscoreFound = 1;
                     monthPart = date.substr(i+1, 2);
-                    month = std::atof(monthPart.c_str());
+                    month = std::atoi(monthPart.c_str());
                 }
                 else
                     return false;
@@ -192,14 +189,13 @@ bool BitcoinExchange::isvalidFormat_Db(std::string& date, float& month, float& d
                 {
                     underscoreFound = 2;
                     dayPart = date.substr(i+1, 2);
-                    day = std::atof(dayPart.c_str());
+                    day = std::atoi(dayPart.c_str());
                 }
                 else
                     return false;
             }
         }
         i++;
-        ratePart = std::atof(ratePart.c_str());
     }
     if(underscoreFound == 2)
         return true;
@@ -208,75 +204,34 @@ bool BitcoinExchange::isvalidFormat_Db(std::string& date, float& month, float& d
 
 
 
-void    BitcoinExchange::loadDataBase()
-{   
-    std::ifstream dataFile ("data.csv");
-    if(!dataFile.is_open())
-    {
-        std::cout << "file is not found " << std::endl;
-        return;
-    }
-    else
-    {
-        std::string line;
-        std::string date;
-
-        float month;
-        float day;
-        float rate;
-
-        getline(dataFile, line);
-        
-        
-        while(std::getline(dataFile,line))
-        {
-            if(Db_parsing(line , date, rate))
-            {
-                if(isvalidFormat_Db(date, month, day , rate))
-                {
-                    db[date] = rate;
-                }
-            }
-        }
-
-        it = db.begin();
-        std::advance(it,1);
-        
-        for(it ; it != db.end() ; ++it)
-        {
-            std::cout << it->first << " => "<< it->second << std::endl;
-        }
-    }
-}
-
-
-
-bool BitcoinExchange::isvalidFormat_Input(std::string& date,float& year, float& month, float& day)
+bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& month, int& day)
 {
-     int underscoreFound = 0;
+    std::string yearPart;
+    
+    if(date.length() != 10)
+    {
+        std::cout << "Date is too short : ";
+        return false;
+    }
+    yearPart = date.substr(0,4);
+    year = std::atoi(yearPart.c_str());
+    
+    for(int j = 0; j < yearPart.length(); j++)
+    {
+        if(!isdigit(yearPart[j]))
+        {
+            std::cout << "invalid year format" << std::endl;
+            return false;
+        }
+    }
+
+    int underscoreFound = 0;
     int i = 0;
     std::string monthPart;
     std::string dayPart;
-    std::string yearPart;
 
-    while (date[i])
+    while (i < date.length())
     {   
-        if(date.length() != 10)
-        {
-            std::cout << "Date is too short : ";
-            return false;
-        }
-        yearPart = date.substr(0,4);
-        year = std::atof(yearPart.c_str());
-        
-        for(int j = 0; j < yearPart.length(); j++)
-        {
-            if(!isdigit(yearPart[j]))
-            {
-                std::cout << "invalid year format" << std::endl;
-                return false;
-            }
-        }
         if (date[i] == '-')
         {
             if (underscoreFound == 0)
@@ -285,7 +240,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,float& year, float& 
                 {
                     underscoreFound = 1;
                     monthPart = date.substr(i+1, 2);
-                    month = std::atof(monthPart.c_str());
+                    month = std::atoi(monthPart.c_str());
                     if(!isvalideMonth(month))
                         return false;
                 }
@@ -301,7 +256,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,float& year, float& 
                 {
                     underscoreFound = 2;
                     dayPart = date.substr(i+1, 2);
-                    day = std::atof(dayPart.c_str());
+                    day = std::atoi(dayPart.c_str());
                     if(!isvalideDay(day, month, year))
                         return false;
                 }
@@ -323,6 +278,73 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,float& year, float& 
     }
 }
 
+
+
+void    BitcoinExchange::loadDataBase()
+{   
+    std::ifstream dataFile ("data.csv");
+    if(!dataFile.is_open())
+    {
+        std::cout << "file is not found " << std::endl;
+        return;
+    }
+    else
+    {
+        std::string line;
+        std::string date;
+
+        int month;
+        int day;
+        float rate;
+
+        getline(dataFile, line);
+        
+        
+        while(std::getline(dataFile,line))
+        {
+            if(Db_parsing(line , date, rate))
+            {
+                if(isvalidFormat_Db(date, month, day))
+                {
+                    db[date] = rate;
+                }
+            }
+        }
+
+        // std::map<std::string , float> ::iterator it = db.begin();
+        //std::advance(it,1);
+        
+        // for(it ; it != db.end() ; ++it)
+        // {
+        //     std::cout << it->first << " => "<< it->second << std::endl;
+        // }
+    }
+}
+
+float  BitcoinExchange::getRate(std::string &date)
+{
+    std::map<std::string , float>::iterator it = db.lower_bound(date);
+    
+    if(it == db.end())
+    {
+        --it;
+        return it->second;
+    }
+
+    if(it != db.end() && it->first == date)
+        return it->second;
+    
+    if(it == db.begin())
+        throw std::runtime_error("Error: date before database.");
+    
+    else
+    {
+        --it;
+        return it->second;
+    }
+}
+
+
 void BitcoinExchange::loadInputfile()
 {   
      std::ifstream input("input.txt"); 
@@ -333,9 +355,9 @@ void BitcoinExchange::loadInputfile()
     std::string line;
     std::string date;
     
-    float month;
-    float day;
-    float year;
+    int month;
+    int day;
+    int year;
     
     float value;
     
@@ -344,26 +366,27 @@ void BitcoinExchange::loadInputfile()
     {
         if(s_trim(line).empty())
             continue;
-        else
-            std::cout << line << std::endl;
-
         if(inputFile_parsing(line , date, value))
         {
             if(!isvalidFormat_Input(date, year, month , day))
-           {
+            {
                 std::cout << "invalid date" << std::endl;
-                std::cout << std::endl;
             }
             else
             {
-                std::cout << "valid" << std::endl;
-                std::cout << std::endl;
+                float rate = getRate(date);
+                float result = value * rate;
+                std::cout << date
+                    << " => "
+                    << value
+                    << " = "
+                    << result
+                    << std::endl;
             }
         }
         else 
         {
             std::cout << "invalid syntax"<< std::endl;
-            std::cout << std::endl;
         }   
     }
 }
@@ -371,6 +394,14 @@ void BitcoinExchange::loadInputfile()
 
 int main()
 {
-    BitcoinExchange b;
-    b.loadDataBase();
+    try 
+    {
+        BitcoinExchange b;
+        b.loadDataBase();
+        b.loadInputfile();
+    }
+    catch(const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+    }
 }

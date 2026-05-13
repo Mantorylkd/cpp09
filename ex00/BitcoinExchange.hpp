@@ -8,8 +8,6 @@ class BitcoinExchange
 {
     private :
         std::map<std::string , float> db;
-        std::map<std::string , float> ::iterator it;
-            
     public:
         BitcoinExchange();
         ~BitcoinExchange() {};
@@ -22,9 +20,9 @@ class BitcoinExchange
 
         bool    Db_parsing(std::string& line ,std::string& date, float& rate);
         bool    inputFile_parsing(std::string& line ,std::string& date, float& value);
-        bool    isvalidFormat_Db(std::string& date, float& month, float& day, float& rate);
-        bool    isvalidFormat_Input(std::string& date, float&year, float& month, float& day);
-        
+        bool    isvalidFormat_Db(std::string& date, int& month, int& day);
+        bool    isvalidFormat_Input(std::string& date, int&year, int& month, int& day);
+        float   getRate(std::string &date);
 };
 
 

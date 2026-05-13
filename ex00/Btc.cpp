@@ -277,5 +277,22 @@ int main()
     }
 }
 
+float BitcoinExchange::getRate(const std::string& date)
+{
+    std::map<std::string, float>::iterator it = db.lower_bound(date);
 
+    if (it == db.end())
+    {
+        --it;
+        return it->second;
+    }
 
+    if (it->first == date)
+        return it->second;
+
+    if (it == db.begin())
+        throw std::runtime_error("Error: date before database.");
+
+    --it;
+    return it->second;
+}
