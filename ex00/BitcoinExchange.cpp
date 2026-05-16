@@ -8,7 +8,7 @@ BitcoinExchange::BitcoinExchange() {}
 
 bool  BitcoinExchange::Db_parsing(std::string& line ,std::string& date, float& rate)
 {
-    int seperator = line.find(',');
+    std::string::size_type seperator = line.find(',');
     if(seperator == std::string::npos)
         return false;
     date = line.substr(0, seperator);
@@ -113,14 +113,14 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
         return false;
     int sepfind = 0;
     std::string val;
-    int seperator = line.find('|');
+    std::string::size_type seperator = line.find('|');
     if(seperator == std::string::npos)
     {
         std::cout << "error : missing seperator '|' : ";
         return false;
     }
     
-    for (int i = seperator+1 ; i < line.length() ; i++)
+    for (std::string::size_type i = seperator+1 ; i < line.length() ; i++)
     {
         if(line[i] == '|')
             sepfind = 1;
@@ -164,7 +164,7 @@ bool BitcoinExchange::isvalidFormat_Db(std::string& date, int& month, int& day)
         return false;
     
     int underscoreFound = 0;
-    int i = 0;
+    std::string::size_type i = 0;
     std::string monthPart;
     std::string dayPart;
 
@@ -216,7 +216,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
     yearPart = date.substr(0,4);
     year = std::atoi(yearPart.c_str());
     
-    for(int j = 0; j < yearPart.length(); j++)
+    for(std::string::size_type j = 0; j < yearPart.length(); j++)
     {
         if(!isdigit(yearPart[j]))
         {
@@ -226,7 +226,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
     }
 
     int underscoreFound = 0;
-    int i = 0;
+    std::string::size_type i = 0;
     std::string monthPart;
     std::string dayPart;
 
@@ -277,7 +277,6 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
         return false;
     }
 }
-
 
 
 void    BitcoinExchange::loadDataBase()
@@ -388,20 +387,5 @@ void BitcoinExchange::loadInputfile()
         {
             std::cout << "invalid syntax"<< std::endl;
         }   
-    }
-}
-
-
-int main()
-{
-    try 
-    {
-        BitcoinExchange b;
-        b.loadDataBase();
-        b.loadInputfile();
-    }
-    catch(const std::exception &e)
-    {
-        std::cout << e.what() << std::endl;
     }
 }
