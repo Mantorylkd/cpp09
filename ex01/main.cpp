@@ -21,7 +21,7 @@ int main(int ac , char **av)
     
     if(c.size() != 1)
     {
-        std::cout << "Error" << std::endl;
+        std::cerr << "Error" << std::endl;
         return 1;
     } 
     
