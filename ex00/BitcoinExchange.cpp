@@ -8,11 +8,11 @@ BitcoinExchange::BitcoinExchange() {}
 
 bool  BitcoinExchange::Db_parsing(std::string& line ,std::string& date, float& rate)
 {
-    std::string::size_type seperator = line.find(',');
-    if(seperator == std::string::npos)
+    std::string::size_type separator = line.find(',');
+    if(separator == std::string::npos)
         return false;
-    date = line.substr(0, seperator);
-    std::string Rate = line.substr(seperator + 1);
+    date = line.substr(0, separator);
+    std::string Rate = line.substr(separator + 1);
 
     rate = std::atof(Rate.c_str());
 
@@ -22,8 +22,8 @@ bool  BitcoinExchange::Db_parsing(std::string& line ,std::string& date, float& r
 
 std::string s_trim(std::string &s)
 {
-    size_t start = s.find_first_not_of(" \t");
-    size_t end = s.find_last_not_of(" \t");
+    std::string::size_type start = s.find_first_not_of(" \t");
+    std::string::size_type end = s.find_last_not_of(" \t");
 
     if(start == std::string::npos)
         return "" ;
@@ -36,7 +36,7 @@ bool isNumericValue(const std::string& val)
     int dotCount = 0;
     if (val.empty())
     {
-        std::cout << "missing value : ";
+        std::cout << "Error: missing value" << std::endl;
         return false;
     }
 
@@ -64,7 +64,7 @@ bool isLeapYear(int year)
     return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 }
 
-bool  isvalideDay(int& day, int& month, int& year)
+bool  isValidDay(int& day, int& month, int& year)
 {
     if(month == 2)
     {
@@ -73,7 +73,7 @@ bool  isvalideDay(int& day, int& month, int& year)
         else if(day == 29 && isLeapYear(year))
             return true ;
         
-        std::cout << "Error : invalid February day : ";
+        std::cout << "Error: invalid February day" << std::endl;
         return false;
     }
    else if (month == 4 || month == 6 || month == 9 || month == 11)
@@ -81,7 +81,7 @@ bool  isvalideDay(int& day, int& month, int& year)
         if (day >= 1 && day <= 30)
             return true;
 
-        std::cout << "invalid day : ";
+        std::cout << "Error: invalid day" << std::endl;
         return false;
     }
     else
@@ -89,19 +89,19 @@ bool  isvalideDay(int& day, int& month, int& year)
         if(day >= 1 && day <= 31)
             return true;
         
-        std::cout << "invalid day : ";
+        std::cout << "Error: invalid day" << std::endl;
         return false;
     }
     return false;
 }
 
-bool  isvalideMonth(int& month )
+bool  isValidMonth(int& month )
 {
     if(month >= 1 && month <= 12)
         return true;
     else
     {
-        std::cout << "invalid month : ";
+        std::cout << "Error: invalid month" << std::endl;
         return false;
     }
 }
@@ -116,7 +116,7 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     std::string::size_type seperator = line.find('|');
     if(seperator == std::string::npos)
     {
-        std::cout << "error : missing seperator '|' : ";
+        std::cout << "Error: missing seperator '|' " << std::endl;
         return false;
     }
     
@@ -127,16 +127,16 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     }
     if(sepfind == 1)
     {
-        std::cout << "error : too many seperators : ";
+        std::cout << "Error: multiple seperators " << std::endl;
         return false;
     }
     
     date = line.substr(0, seperator);
     date = s_trim(date);
 
-    int end = line.find_last_not_of(" \t");
+    std::string::size_type end = line.find_last_not_of(" \t");
 
-    val = line.substr(seperator + 1 , end);
+    val = line.substr(seperator + 1 , end - seperator);
     val = s_trim(val);
     
     if(!isNumericValue(val))
@@ -146,12 +146,12 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     value = std::atof(val.c_str());
     if(value > 1000)
     {
-        std::cout << "value is too large :";
+        std::cout << "Error: value is too large "<< std::endl;
         return false;
     }
     else if(value < 0)
     {
-        std::cout << "non positive number :";
+        std::cout << "Error: negative number " << std::endl;
         return false;
     }
     return true;
@@ -161,7 +161,10 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
 bool BitcoinExchange::isvalidFormat_Db(std::string& date, int& month, int& day)
 {
     if(date.length() != 10)
+    {
+        std::cout << "Error: invalid date length  " << std::endl;
         return false;
+    }
     
     int underscoreFound = 0;
     std::string::size_type i = 0;
@@ -210,7 +213,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
     
     if(date.length() != 10)
     {
-        std::cout << "Date is too short : ";
+        std::cout << "Error: invalid date length" << std::endl; 
         return false;
     }
     yearPart = date.substr(0,4);
@@ -218,9 +221,9 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
     
     for(std::string::size_type j = 0; j < yearPart.length(); j++)
     {
-        if(!isdigit(yearPart[j]))
+        if(!std::isdigit(yearPart[j]))
         {
-            std::cout << "invalid year format" << std::endl;
+            std::cout << "Error: invalid year format" << std::endl;
             return false;
         }
     }
@@ -241,12 +244,12 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                     underscoreFound = 1;
                     monthPart = date.substr(i+1, 2);
                     month = std::atoi(monthPart.c_str());
-                    if(!isvalideMonth(month))
+                    if(!isValidMonth(month))
                         return false;
                 }
                 else
                 {
-                    std::cout << "bad emplacement of '-' "<< std::endl;
+                    std::cout << "Error: bad emplacement of '-' "<< std::endl;
                     return false;
                 }
             }
@@ -257,12 +260,12 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                     underscoreFound = 2;
                     dayPart = date.substr(i+1, 2);
                     day = std::atoi(dayPart.c_str());
-                    if(!isvalideDay(day, month, year))
+                    if(!isValidDay(day, month, year))
                         return false;
                 }
                 else
                 {
-                    std::cout << "bad emplacement of '-' "<< std::endl;
+                    std::cout << "Error: bad emplacement of '-' "<< std::endl;
                     return false;
                 }
             }
@@ -273,7 +276,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
         return true;
     else
     {
-        std::cout << "bad date format : " ; 
+        std::cout << "Error: bad date format" << std::endl ; 
         return false;
     }
 }
@@ -284,7 +287,7 @@ void    BitcoinExchange::loadDataBase()
     std::ifstream dataFile ("data.csv");
     if(!dataFile.is_open())
     {
-        std::cout << "file is not found " << std::endl;
+        std::cout << "Error: file is not found"<< std::endl;
         return;
     }
     else
@@ -344,12 +347,11 @@ float  BitcoinExchange::getRate(std::string &date)
 }
 
 
-void BitcoinExchange::loadInputfile()
+void BitcoinExchange::loadInputfile(const std::string& fileName)
 {   
-     std::ifstream input("input.txt"); 
-    
+    std::ifstream input(fileName.c_str());
     if (!input.is_open())
-        std::cout << "input file not found\n";
+        std::cout << "Error: input file not found\n";
 
     std::string line;
     std::string date;
@@ -367,25 +369,24 @@ void BitcoinExchange::loadInputfile()
             continue;
         if(inputFile_parsing(line , date, value))
         {
-            if(!isvalidFormat_Input(date, year, month , day))
+            if(isvalidFormat_Input(date, year, month , day))
             {
-                std::cout << "invalid date" << std::endl;
-            }
-            else
-            {
-                float rate = getRate(date);
-                float result = value * rate;
-                std::cout << date
-                    << " => "
-                    << value
-                    << " = "
-                    << result
-                    << std::endl;
+                try
+                {
+                    float rate = getRate(date);
+                    float result = value * rate;
+                    std::cout << date
+                              << " => "
+                              << value
+                              << " = "
+                              << result
+                              << std::endl;
+                }
+                catch(const std::exception& e)
+                {
+                    std::cerr << e.what() << '\n';
+                }
             }
         }
-        else 
-        {
-            std::cout << "invalid syntax"<< std::endl;
-        }   
     }
 }
