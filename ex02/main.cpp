@@ -10,6 +10,7 @@ int main(int ac , char **av)
     }
     PmergeMe p;
     
-    p.StoreInt(av[1]);
-    
+    p.storeInt(av[1]);
+    std::vector<int> vct = p.getContainer() ;
+    splitVector(vct);
 }

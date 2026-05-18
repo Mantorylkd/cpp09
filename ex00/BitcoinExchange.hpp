@@ -27,13 +27,4 @@ class BitcoinExchange
 };
 
 
-// std::string     s_trim(std::string &s);
-// bool    isNumericValue(const std::string& val);
-// bool    isLeapYear(int year);
-// bool    isvalideMonth(float& month );
-// bool    isvalideMonth(float& month );
-// bool    Db_parsing(std::string& line,std::string& date, float& rate);
-// bool    inputfile_parsing(std::string& line ,std::string& date, float& value);
-// bool    isvalideFormat(std::string& date, float& year, float& month, float& day);
-
 #endif

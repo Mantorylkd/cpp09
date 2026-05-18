@@ -1,0 +1,7 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/goinfre/ekhallaf/cpp09/ex02'
+c++ -Wall -Wextra -Werror -std=c++98 -c main.cpp -o main.o
+c++ -Wall -Wextra -Werror -std=c++98 -c PmergeMe.cpp -o PmergeMe.o
+c++ -Wall -Wextra -Werror -std=c++98 main.o PmergeMe.o -o ex02
+make: Leaving directory '/goinfre/ekhallaf/cpp09/ex02'
+ 
