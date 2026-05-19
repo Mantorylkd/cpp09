@@ -5,108 +5,103 @@ std::vector<int>    PmergeMe::getContainer()
     return vct;
 }
 
-
-int   getMin(std::vector<int>& a , std::vector<int>& b)
+bool PmergeMe::storeInt(const std::string& str)
 {
-    if(a < b)
-        return a[0];
-    return b[0];
-}
+    std::stringstream ss(str);
 
-int   getMax(std::vector<int>& a , std::vector<int>& b)
-{
-    if(a > b)
-        return a[0];
-    return b[0];
-}
+    int number;
 
-
-bool    PmergeMe::storeInt(const std::string& a)
-{
-    int i = 0;
-    while(a[i])
+    while(ss >> number)
     {
-        if(a[i] == ' ')
-        {
-            i++;
-            continue;
-        }
-        if(!std::isdigit(a[i]))
-        {
-            return false;
-        }
-        else
-        {
-            int number = a[i] - '0';
-            vct.push_back(number);
-            dq.push_back(number);
-            i++;
-        }
-    }
-    
-    std::vector<int>::iterator vector_it;
-    // std::deque<int>::iterator deque_it;
-
-    std::cout << "this is our container" << std::endl;
-    for(vector_it = vct.begin() ; vector_it != vct.end(); ++vector_it)
-    {
-        std::cout << *vector_it << std::endl;
+        vct.push_back(number);
+        dq.push_back(number);
     }
 
-    // for(deque_it = dq.begin() ; deque_it != dq.end(); ++deque_it)
-    // {
-    //     std::cout << *deque_it << std::endl;
-    // }
+    if(ss.fail() && !ss.eof())
+        return false;
+
     return true;
 }
 
-
-std::vector<int>&   MergeSort(std::vector<int>& a , std::vector<int>& b)
+std::vector<int> PmergeMe::MergeSort(std::vector<int>& a, std::vector<int>& b)
 {
     std::vector<int> final;
-    
-    int min = getMin(a, b);
-    int max = getMax(a, b);
-    
-    final.push_back(min);
-    final.push_back(max);
 
-    std::vector<int>::iterator it2;
-    std::cout << "this is final sorted container "<< std::endl;
-    for(it2 = final.begin() ; it2 != final.end() ; ++it2)
+    unsigned int i = 0;
+    unsigned int j = 0;
+
+    while(i < a.size() && j < b.size())
     {
-        std::cout << *it2 << std::endl;
+        if(a[i] < b[j])
+        {
+            final.push_back(a[i]);
+            i++;
+        }
+        else
+        {
+            final.push_back(b[j]);
+            j++;
+        }
     }
-    
+
+    while(i < a.size())
+    {
+        final.push_back(a[i]);
+        i++;
+    }
+
+    while(j < b.size())
+    {
+        final.push_back(b[j]);
+        j++;
+    }
+
     return final;
 }
 
 
-bool  splitVector(std::vector<int>& vctr)
+static bool checkDuplicate(std::vector <int>& vctr)
 {
+    std::vector<int>::size_type i;
+    std::vector<int>::size_type j;
+
+    for(i = 0 ; i < vctr.size() ; ++i)
+    {
+        for(j = i + 1 ; j < vctr.size() ; ++j)
+        {
+            if(vctr[i] == vctr[j])
+                return true;
+        }
+    }
+    return false;
+}
+
+
+std::vector<int>  PmergeMe::splitVector(std::vector<int>& vctr)
+{
+    if(vctr.empty())
+        throw std::runtime_error("Error : empty arg");
+
     if(vctr.size() <= 1)
-        return true;
+         return vctr;
+    
+    if(checkDuplicate(vctr))
+        throw std::runtime_error("Error : duplication detected !");
+
     std::vector<int>  leftPart ;
     std::vector <int> rightPart;
 
 
-    std::vector<int>::iterator it;
     std::vector<int>::size_type mid = vctr.size() / 2;
     
-    std::cout << "___________________\n";
-    std::cout << "this is the left part" << std::endl;
     for(unsigned int i = 0 ; i < mid ; ++i)
     {
         leftPart.push_back(vctr[i]);
-        std::cout << leftPart[i] << std::endl;
     }   
 
-    std::cout << "___________________\n";
-    std::cout << "this is the right part" << std::endl;
     for (unsigned int j = mid  ; j < vctr.size() ; ++j)
     {
         rightPart.push_back(vctr[j]);
-        std::cout << rightPart.back() << std::endl;
     }
 
     if(leftPart.size() > 1)
@@ -116,8 +111,8 @@ bool  splitVector(std::vector<int>& vctr)
         splitVector(rightPart);
 
     vctr = MergeSort(leftPart, rightPart);
-    
-    return true;
+
+    return vctr;
 }
 
 

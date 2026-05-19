@@ -4,6 +4,8 @@
 #include <deque>
 #include <iostream>
 #include <cstdlib>
+#include <ctime>
+#include <sstream>
 
 class PmergeMe
 {
@@ -14,11 +16,8 @@ class PmergeMe
     public :
         bool    storeInt(const std::string& a);
         std::vector<int>    getContainer();
-        
+        std::vector<int>    splitVector(std::vector<int>& containr);
+        std::vector<int>    MergeSort(std::vector<int>& a , std::vector<int>& b);
     };
 
-bool    splitVector(std::vector<int>& containr);
-int    getMin(std::vector<int>& a , std::vector<int>& b);
-int    getMax(std::vector<int>& a , std::vector<int>& b);
-std::vector<int>&    MergeSort(std::vector<int>& a , std::vector<int>& b);
 #endif
