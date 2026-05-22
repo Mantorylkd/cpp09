@@ -16,7 +16,7 @@ class PmergeMe
     public :
         bool    storeInt(const std::string& a);
         std::vector<int>    getContainer();
-        std::vector<int>    splitVector(std::vector<int>& containr);
+        std::vector<int>    splitChain(std::vector<int>& containr);
         std::vector<int>    MergeSort(std::vector<int>& a , std::vector<int>& b);
         std::vector< std::pair<int, int> > makePairs(std::vector<int>& container);
         std::vector<int>    makeChains(std::vector <std::pair<int, int> > & pairs , std::vector <int> first , std::vector <int> second);

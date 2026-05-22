@@ -44,16 +44,14 @@ int main()
     v.push_back(1);
     v.push_back(3);
     v.push_back(4);
+    v.push_back(6);
+    v.push_back(9);
+    v.push_back(7);
+    v.push_back(8);
     
     PmergeMe p;
     std::vector <std::pair<int, int> > pairs = p.makePairs(v);
     std::vector <int> first , second;
     std::vector<int> firstone =  p.makeChains(pairs, first , second);
-    
-    if(firstone.empty())
-        std::cout << "empty\n";
-    for (size_t i = 0 ; i < firstone.size() ; ++i)
-    {
-        std::cout << firstone[i] << std::endl;
-    }
+
 }
