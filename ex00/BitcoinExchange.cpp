@@ -120,7 +120,7 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
         return false;
     }
     
-    for (std::string::size_type i = seperator+1 ; i < line.length() ; i++)
+    for(std::string::size_type i = seperator + 1 ; i < line.length() ; i++)
     {
         if(line[i] == '|')
             sepfind = 1;
@@ -134,15 +134,14 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     date = line.substr(0, seperator);
     date = s_trim(date);
 
-    std::string::size_type end = line.find_last_not_of(" \t");
-
-    val = line.substr(seperator + 1 , end - seperator);
+    val = line.substr(seperator + 1);
     val = s_trim(val);
     
     if(!isNumericValue(val))
     {
         return false;
     }
+    
     value = std::atof(val.c_str());
     if(value > 1000)
     {
