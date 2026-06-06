@@ -31,6 +31,16 @@ std::string s_trim(std::string &s)
     return (s.substr(start, end - start + 1));
 }
 
+bool    nonDigitCheck(std::string value)
+{
+    for(size_t i = 0 ; i < value.length() ; ++i)
+    {
+        if(!isdigit(value[i]))
+            return true;
+    }
+    return false;
+}
+
 bool isNumericValue(const std::string& val)
 {
     int dotCount = 0;
@@ -116,7 +126,7 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     std::string::size_type seperator = line.find('|');
     if(seperator == std::string::npos)
     {
-        std::cout << "Error: missing seperator '|' " << std::endl;
+        std::cout << "Error: missing separator '|' " << std::endl;
         return false;
     }
     
@@ -127,15 +137,25 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     }
     if(sepfind == 1)
     {
-        std::cout << "Error: multiple seperators " << std::endl;
+        std::cout << "Error: multiple separators " << std::endl;
         return false;
     }
     
     date = line.substr(0, seperator);
     date = s_trim(date);
+    if(date == "")
+    {
+        std::cout << "Error : missing date"<<std::endl;
+        return false;
+    }
 
     val = line.substr(seperator + 1);
     val = s_trim(val);
+    if(val == "")
+    {
+        std::cout << "Error : missing value"<<std::endl;
+        return false;
+    }
     
     if(!isNumericValue(val))
     {
@@ -216,7 +236,6 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
         return false;
     }
     yearPart = date.substr(0,4);
-    year = std::atoi(yearPart.c_str());
     
     for(std::string::size_type j = 0; j < yearPart.length(); j++)
     {
@@ -225,6 +244,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
             std::cout << "Error: invalid year format" << std::endl;
             return false;
         }
+        year = std::atoi(yearPart.c_str());
     }
 
     int underscoreFound = 0;
@@ -242,6 +262,11 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                 {
                     underscoreFound = 1;
                     monthPart = date.substr(i+1, 2);
+                    if(nonDigitCheck(monthPart))
+                    {
+                        std::cout << "Error : invalid month" << std::endl; 
+                        return false;
+                    }
                     month = std::atoi(monthPart.c_str());
                     if(!isValidMonth(month))
                         return false;
@@ -258,6 +283,11 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                 {
                     underscoreFound = 2;
                     dayPart = date.substr(i+1, 2);
+                    if(nonDigitCheck(dayPart))
+                    {
+                        std::cout << "Error : invalid day" << std::endl; 
+                        return false;
+                    }
                     day = std::atoi(dayPart.c_str());
                     if(!isValidDay(day, month, year))
                         return false;
@@ -322,27 +352,30 @@ void    BitcoinExchange::loadDataBase()
     }
 }
 
-float  BitcoinExchange::getRate(std::string &date)
+float BitcoinExchange::getRate(const std::string &date)
 {
-    std::map<std::string , float>::iterator it = db.lower_bound(date);
-    
-    if(it == db.end())
+    if (db.empty())
+        throw std::runtime_error("Error: empty database.");
+
+    std::map<std::string, float>::iterator it = db.lower_bound(date);
+
+    // if exact match
+    if (it != db.end() && it->first == date)
+        return it->second;
+
+    // if lower_bound points to first element
+    if (it == db.begin())
     {
-        --it;
+        if (it->first > date)
+            throw std::runtime_error("Error: date before database.");
         return it->second;
     }
 
-    if(it != db.end() && it->first == date)
-        return it->second;
-    
-    if(it == db.begin())
-        throw std::runtime_error("Error: date before database.");
-    
-    else
-    {
+    // otherwise step back to get closest lower date
+    if (it == db.end() || it->first > date)
         --it;
-        return it->second;
-    }
+
+    return it->second;
 }
 
 

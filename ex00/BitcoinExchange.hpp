@@ -23,7 +23,7 @@ class BitcoinExchange
         bool    inputFile_parsing(std::string& line ,std::string& date, float& value);
         bool    isvalidFormat_Db(std::string& date, int& month, int& day);
         bool    isvalidFormat_Input(std::string& date, int&year, int& month, int& day);
-        float   getRate(std::string &date);
+        float   getRate(const std::string &date);
 };
 
 
