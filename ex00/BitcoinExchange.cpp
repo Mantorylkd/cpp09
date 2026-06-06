@@ -159,6 +159,7 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     
     if(!isNumericValue(val))
     {
+        std::cout << "Error : invalid value" << std::endl;
         return false;
     }
     
@@ -341,14 +342,6 @@ void    BitcoinExchange::loadDataBase()
                 }
             }
         }
-
-        // std::map<std::string , float> ::iterator it = db.begin();
-        //std::advance(it,1);
-        
-        // for(it ; it != db.end() ; ++it)
-        // {
-        //     std::cout << it->first << " => "<< it->second << std::endl;
-        // }
     }
 }
 
