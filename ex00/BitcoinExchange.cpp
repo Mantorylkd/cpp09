@@ -145,7 +145,7 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     date = s_trim(date);
     if(date == "")
     {
-        std::cout << "Error : missing date"<<std::endl;
+        std::cout << "Error: missing date"<<std::endl;
         return false;
     }
 
@@ -153,13 +153,13 @@ bool BitcoinExchange::inputFile_parsing(std::string& line ,std::string& date, fl
     val = s_trim(val);
     if(val == "")
     {
-        std::cout << "Error : missing value"<<std::endl;
+        std::cout << "Error: missing value"<<std::endl;
         return false;
     }
     
     if(!isNumericValue(val))
     {
-        std::cout << "Error : invalid value" << std::endl;
+        std::cout << "Error: invalid value" << std::endl;
         return false;
     }
     
@@ -265,7 +265,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                     monthPart = date.substr(i+1, 2);
                     if(nonDigitCheck(monthPart))
                     {
-                        std::cout << "Error : invalid month" << std::endl; 
+                        std::cout << "Error: invalid month" << std::endl; 
                         return false;
                     }
                     month = std::atoi(monthPart.c_str());
@@ -286,7 +286,7 @@ bool BitcoinExchange::isvalidFormat_Input(std::string& date,int& year, int& mont
                     dayPart = date.substr(i+1, 2);
                     if(nonDigitCheck(dayPart))
                     {
-                        std::cout << "Error : invalid day" << std::endl; 
+                        std::cout << "Error: invalid day" << std::endl; 
                         return false;
                     }
                     day = std::atoi(dayPart.c_str());
@@ -383,8 +383,7 @@ void BitcoinExchange::loadInputfile(const std::string& fileName)
     
     int month;
     int day;
-    int year;
-    
+    int year;    
     float value;
     
     getline(input , line);
