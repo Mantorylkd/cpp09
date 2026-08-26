@@ -331,7 +331,6 @@ void    BitcoinExchange::loadDataBase()
 
         getline(dataFile, line);
         
-        
         while(std::getline(dataFile,line))
         {
             if(Db_parsing(line , date, rate))
